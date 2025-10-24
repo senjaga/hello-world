@@ -1,14 +1,22 @@
-name: Hello Workflow
+name: Docker Matrix Workflow
 
 on:
-  push:        # Trigger this workflow on every push event
+  push:
     branches:
-      - main    # You can also use "*" to trigger on all branches
+      - main
 
 jobs:
-  hello-job:
-    runs-on: ubuntu-latest   # Run job on ubuntu-latest runner
+  deploy:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-20.04, windows-latest]
+        images: [hello-world, alpine]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Echo text
-        run: echo "Hello, world!"
+      - name: Echo Docker Details
+        run: docker info
+
+      - name: Run Image on ${{ matrix.os }}
+        run: docker run ${{ matrix.images }}
